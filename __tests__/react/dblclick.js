@@ -7,6 +7,42 @@ afterEach(cleanup);
 
 describe("userEvent.dblClick", () => {
   it.each(["input", "textarea"])(
+    "should fire the correct events for <%s> when disabled",
+    type => {
+      const events = [];
+      const eventsHandler = jest.fn(evt => events.push(evt.type));
+      const { getByTestId } = render(
+        React.createElement(type, {
+          "data-testid": "element",
+          disabled: "disabled",
+          onMouseOver: eventsHandler,
+          onMouseMove: eventsHandler,
+          onMouseDown: eventsHandler,
+          onFocus: eventsHandler,
+          onMouseUp: eventsHandler,
+          onClick: eventsHandler,
+          onDoubleClick: eventsHandler
+        })
+      );
+
+      userEvent.dblClick(getByTestId("element"));
+
+      expect(events).not.toEqual([
+        "mouseover",
+        "mousemove",
+        "mousedown",
+        "focus",
+        "mouseup",
+        "click",
+        "mousedown",
+        "mouseup",
+        "click",
+        "dblclick"
+      ]);
+    }
+  );
+
+  it.each(["input", "textarea"])(
     "should fire the correct events for <%s>",
     type => {
       const events = [];

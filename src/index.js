@@ -12,6 +12,10 @@ function findTagInParents(element, tagName) {
   return findTagInParents(element.parentNode, tagName);
 }
 
+function isElementDisabled(element) {
+  return element.disabled;
+}
+
 function clickLabel(label) {
   fireEvent.mouseOver(label);
   fireEvent.mouseMove(label);
@@ -31,7 +35,9 @@ function clickLabel(label) {
 }
 
 function clickBooleanElement(element) {
-  if (element.disabled) return;
+  if (isElementDisabled(element)) {
+    return;
+  }
 
   fireEvent.mouseOver(element);
   fireEvent.mouseMove(element);
@@ -166,6 +172,10 @@ const userEvent = {
   },
 
   async type(element, text, userOpts = {}) {
+    if (isElementDisabled(element)) {
+      return;
+    }
+
     const defaultOpts = {
       allAtOnce: false,
       delay: 0

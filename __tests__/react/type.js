@@ -6,6 +6,24 @@ import userEvent from "../../src";
 afterEach(cleanup);
 
 describe("userEvent.type", () => {
+  it.each(["input", "textarea"])(
+    "should not type text in <%s> when disabled",
+    type => {
+      const onChange = jest.fn();
+      const { getByTestId } = render(
+        React.createElement(type, {
+          disabled: "disabled",
+          "data-testid": "input",
+          onChange: onChange
+        })
+      );
+      const text = "Hello, world!";
+      userEvent.type(getByTestId("input"), text);
+      expect(onChange).not.toHaveBeenCalledTimes(text.length);
+      expect(getByTestId("input")).not.toHaveProperty("value", text);
+    }
+  );
+
   it.each(["input", "textarea"])("should type text in <%s>", type => {
     const onChange = jest.fn();
     const { getByTestId } = render(
